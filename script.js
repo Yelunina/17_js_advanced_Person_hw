@@ -5,8 +5,14 @@ addPerson.onclick = function () {
         alert(`Person with id = ${person.id} exists`);
     } else {
         clearStats();
-        persons.push(person);
+        persons.push(person);       
         const li = createInfoElement(person.toString(), 'li');
+        const buttonDel = createButtonDel(() => {
+            clearStats();
+            const index = persons.findIndex(({id}) => id === person.id);
+            persons.splice(index, 1);
+        });
+        li.append(buttonDel);
         personsList.append(li);
     }
     personId.value = firstName.value = lastName.value = birthDate.value = '';
@@ -24,6 +30,7 @@ calcStats.onclick = function () {
         const h3max = createInfoElement(`Max age: ${age}`, 'h3');
         divStats.append(h3avg, h3min, h3max);
     } catch (e) {
+        console.log(e);
         const h3Error = createInfoElement('No data for processing', 'h3');
         divStats.append(h3Error);
     }
@@ -56,4 +63,17 @@ function createInfoElement(content, tag) {
     const text = document.createTextNode(content);
     element.appendChild(text);
     return element;
+}
+
+function createButtonDel(callBack) {
+    const buttonDel = document.createElement('button');
+    buttonDel.appendChild(document.createTextNode('X'));
+    buttonDel.classList.add('del');
+    buttonDel.onclick = ({target}) => {
+        target.parentElement.remove();
+        if(typeof callBack === 'function'){
+            callBack();
+        }
+    }
+    return buttonDel;
 }
